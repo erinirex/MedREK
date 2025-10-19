@@ -1,12 +1,22 @@
 # MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts.
 
-Source code for **MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**.
+Source code for "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://arxiv.org/abs/2510.13500)".
 
 
 ## 📰 News
 
 * [2025/10/16] 🚀 Our paper is available on arXiv! 
 * [2025/10/15] 🔥 We release the MedVersa dataset and code for MekREK!
+
+
+## 👀 Introduction
+
+
+- We present the **first batch-editing benchmark** in medical scenarios with broader coverage of medical subjects.
+
+- We propose **MedREK**, a retrieval-based editing framework that integrates a **shared query-key module** for precise matching with an **attention-based prompt encoder** for informative guidance.
+
+- Experimental results on various medical benchmarks demonstrate that our MedREK achieves superior performance across different core metrics and provides the **first validated solution for batch-editing in medical LLMs**.
 
 
 ## 🔧 Setup
@@ -58,3 +68,16 @@ This repo is built upon the following projects:
 * [MedLaSA](https://github.com/quqxui/MedLaSA)
 
 We thank the authors for their codes.
+
+
+
+## 📝 Citation
+Please cite our work if you use our code or discuss our findings in your own research:
+```bibtex
+@article{xia2025medrek,
+  title={MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts},
+  author={Xia, Shujun and Lin, Haokun and Wu, Yichen and Zhou, Yinan and Li, Zixuan and Wan, Zhongwei and Xing, Xingrun and Zheng, Yefeng and Li, Xiang and Shan, Caifeng and others},
+  journal={arXiv preprint arXiv:2510.13500},
+  year={2025}
+}
+```
