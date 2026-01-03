@@ -57,22 +57,6 @@ class KnowledgeRepModel(nn.Module):
         attention_mask = torch.ones(self.prot_tokens.shape[:-1], dtype=torch.long, device=self.device)
         rep = self.compute_reps(lhs, po, attention_mask, 'k')
         return rep # [n, rep_n]
-
-     
-# class PromptTransformer(nn.Module):
-#     def __init__(self, in_dim = 2048, out_dim = 1600, prompt_token_n = 3, device = 'cuda:0') -> None:
-#         super().__init__()
-#         self.l1 = nn.Sequential(
-#             nn.Linear(in_dim, in_dim, True), nn.ReLU()
-#         )
-#         self.l2 = nn.Linear(in_dim, out_dim * prompt_token_n, True)
-#         self.prompt_token_n = prompt_token_n
-#         self.to(device)
-#     def forward(self, knowledge_reps:torch.Tensor):
-#         # knowledge_reps: [batch_size, in_dim]
-#         x = self.l1(knowledge_reps) + knowledge_reps
-#         x = self.l2(x).reshape(knowledge_reps.shape[0], self.prompt_token_n, -1)
-#         return x # [batch_size, prompt_token_n, out_dim]
     
 
 class PromptTransformer(nn.Module):
@@ -106,26 +90,3 @@ class PromptTransformer(nn.Module):
         out, _ = self.attn(queries, keys, values)  # [T, B, D]
 
         return out.transpose(0, 1)  # [B, T, D]
-
-
-
-# # ablation no attention
-# class PromptTransformer(nn.Module):
-#     def __init__(self, in_dim=4096, out_dim=4096, prompt_token_n=3, device='cuda:0'):
-#         super().__init__()
-#         self.prompt_token_n = prompt_token_n
-#         self.out_dim = out_dim
-
-#         self.query_proj = nn.Linear(in_dim, prompt_token_n * out_dim)
-
-#         self.to(device)
-
-#     def forward(self, knowledge_reps: torch.Tensor):
-#         # knowledge_reps: [B, in_dim]
-#         B = knowledge_reps.size(0)
-#         D = self.out_dim
-#         T = self.prompt_token_n
-
-#         prompts = self.query_proj(knowledge_reps).view(B, T, D)
-
-#         return prompts  # [B, T, D]
