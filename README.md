@@ -5,6 +5,7 @@ Source code for "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aw
 
 ## 📰 News
 
+* [2025/04/30] 🎉 MedREK has been accepted by **ICML 2026 Main Conference**! 
 * [2025/11/07] 🎉 MedREK has been accepted by ResponsibleFM @ NeurIPS 2025! 
 * [2025/10/16] 🚀 Our paper is available on arXiv! 
 * [2025/10/15] 🔥 We release the MedVersa dataset and code for MekREK!
