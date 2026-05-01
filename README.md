@@ -1,6 +1,6 @@
 # [ICML 2026] MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts.
 
-Source code for "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://arxiv.org/abs/2510.13500)".
+Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://arxiv.org/abs/2510.13500)".
 
 
 ## 📰 News
