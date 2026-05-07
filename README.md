@@ -8,7 +8,7 @@ Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for M
 * [2025/04/30] 🎉 MedREK has been accepted by **ICML 2026 Main Conference**! 
 * [2025/11/07] 🎉 MedREK has been accepted by ResponsibleFM @ NeurIPS 2025! 
 * [2025/10/16] 🚀 Our paper is available on arXiv! 
-* [2025/10/15] 🔥 We release the MedVersa dataset and code for MekREK!
+* [2025/10/15] 🔥 We release the MedVersa dataset and code for MedREK!
 
 
 ## 👀 Introduction
