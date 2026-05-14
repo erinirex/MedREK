@@ -1,8 +1,7 @@
 # [ICML 2026] MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts.
 
-📑[![Paper](https://img.shields.io/badge/Paper-arXiv-b31b1b.svg)](https://arxiv.org/abs/2510.13500)
-🤗 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-Model-yellow)](https://huggingface.co/erinxia/MedVersa)
-
+[![📑 Paper](https://img.shields.io/badge/📑%20Paper-arXiv-b31b1b.svg)](https://arxiv.org/abs/2510.13500)
+[![🤗 Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Model-yellow.svg)](https://huggingface.co/erinxia/MedVersa)
 Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://arxiv.org/abs/2510.13500)".
 
 
