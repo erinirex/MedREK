@@ -3,7 +3,7 @@
 [![📑 Paper](https://img.shields.io/badge/📑%20Paper-arXiv-b31b1b.svg)](https://arxiv.org/abs/2510.13500)
 [![🤗 Dataset](https://img.shields.io/badge/🤗%20Dataset-HuggingFace-blue.svg)](https://huggingface.co/datasets/erinxia/MedVersa)
 
-Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://arxiv.org/abs/2510.13500)".
+Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for Medical LLMs with Key-Aware Prompts**](https://openreview.net/pdf?id=XFHjS8kw6X)".
 
 
 ## 📰 News
