@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 from dataclasses import dataclass, asdict
 import numpy as np
 from copy import deepcopy
-import torch, os, yaml
+import torch, os, yaml, re, math
 from torch.utils.tensorboard import SummaryWriter 
 from torch.optim import Adam
 from .models import KnowledgeRepModel, PromptTransformer
@@ -289,7 +289,19 @@ class MEDREK(BaseEditor):
             {'params': self.knowl_rep_model.parameters(), 'lr': self.cfg.training.krm_lr},
             {'params': self.prompt_transformer.parameters(), 'lr': self.cfg.training.krm_lr}])
         if load_ckpt_path and os.path.isfile(load_ckpt_path):
-            self.ema_loss = self.load_ckpt(load_ckpt_path, True)  
+            self.ema_loss = self.load_ckpt(load_ckpt_path, True)
+            # The checkpoint's EMA loss is only stored in its filename; the
+            # `loss` field is a single batch's loss.
+            m = re.search(r'ema_loss-([0-9.]+)$', os.path.basename(load_ckpt_path))
+            if m:
+                self.ema_loss = float(m.group(1))
+            # Checkpoints are saved after iteration `train_i` finishes, so
+            # continue from the next iteration and its epoch. A mid-epoch
+            # checkpoint restarts that epoch from the beginning.
+            iters_per_epoch = math.ceil(sample_count / batch_size)
+            self.train_i += 1
+            self.train_epoch = (self.train_i - 1) // iters_per_epoch + 1
+            print(f'Resuming at iteration {self.train_i}, epoch {self.train_epoch}')
         else:
             self.train_i, self.train_epoch = 1, 1
             self.ema_loss = 1
