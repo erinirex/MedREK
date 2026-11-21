@@ -7,4 +7,4 @@ tensorboard==2.14.0
 dataclasses-json==0.6.2
 PyYAML==6.0
 datasets==2.18.0
-sentence-transformers==2.2.2
+

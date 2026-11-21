@@ -10,7 +10,7 @@ import time
 
 def train_medrek(model_name:str, data_name, n_epoch, batch_size, train_name, device, load_ckpt_path, model_parallel, sample_n):
     batch_size=int(batch_size)
-    model_name=f"/home/xiashujun/LLM_checkpoint/{model_name}"
+    model_name = os.path.join('models', model_name)
     if args.device == 'auto':
         device = None
     device_map = 'auto' if model_parallel else device
@@ -26,6 +26,8 @@ def train_medrek(model_name:str, data_name, n_epoch, batch_size, train_name, dev
         config_path = "configs/medrek/MEDREK-meditron.yaml"
     elif 'huatuo' in model_name:
         config_path = "configs/medrek/MEDREK-huatuo.yaml"
+    elif 'gpt2' in model_name:
+        config_path = "configs/medrek/gpt2-xl.yaml"
     
     config = MEDREKConfig.from_yaml(config_path)
     medrek = MEDREK(model, tokenizer, config, device, 'models/roberta-base')

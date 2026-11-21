@@ -80,7 +80,7 @@ class MEDREK(BaseEditor):
         # self.prompt_transformer = PromptTransformer(config.knowledge_rep_dim, 
         #     config.model_hidden_size, config.prompt_token_n, self.device)
         knowledge_rep_dim=4096
-        model_hidden_size=4096
+        model_hidden_size=config.model_hidden_size
         prompt_token_n=config.prompt_token_n
         num_heads=8
         self.prompt_transformer = PromptTransformer(knowledge_rep_dim, 
