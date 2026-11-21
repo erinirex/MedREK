@@ -12,7 +12,8 @@ model_path_map = {
     'llama-2-7b-chat': os.path.join(MODEL_PATH, 'Llama-2-7b-chat-hf'),
     'chatdoctor': os.path.join(MODEL_PATH, 'chatdoctor-llama'), 
     'meditron': os.path.join(MODEL_PATH, 'meditron-7b'), 
-    'huatuo-o1-8B': os.path.join(MODEL_PATH, 'huatuo-o1-8B'), 
+    'huatuo-o1-8B': os.path.join(MODEL_PATH, 'huatuo-o1-8B'),
+    'llama3-8b-instruct': os.path.join(MODEL_PATH, 'llama3-8b-instruct'),
     'roberta-base': 'models/roberta-base', 
     'multi-qa-mpnet-base-dot-v1': os.path.join(MODEL_PATH, 'multi-qa-mpnet-base-dot-v1')
 }
@@ -36,6 +37,12 @@ def get_model_editor_config_path(model_name:str, editor_name:str):
     elif 'huatuo' in model_name:
         config_name = 'RECIPE-huatuo.yaml'
         model_path = model_path_map['huatuo-o1-8B']
+    elif 'gpt2' in model_name:
+        config_name = 'gpt2-xl.yaml'
+        model_path = model_path_map['gpt2-xl']
+    elif 'llama3' in model_name:
+        config_name = 'llama3-8b-instruct.yaml'
+        model_path = model_path_map['llama3-8b-instruct']
     else:
         raise
     config_path = os.path.join('configs', editor_name, config_name)
@@ -62,8 +69,12 @@ def get_editor(editor_name:str, edit_model_name:str, device:int, editor_ckpt_pat
         editor = RECIPE(model, tokenizer, config, device, model_path_map['roberta-base'])
         if editor_ckpt_path != None:
             editor.load_ckpt(editor_ckpt_path, True, False)
-    else:
-        raise
+    elif editor_name == 'medrek':
+        from editors.medrek.medrek import MEDREK, MEDREKConfig
+        config = MEDREKConfig.from_yaml(config_path)
+        editor = MEDREK(model, tokenizer, config, device, model_path_map['roberta-base'])
+        if editor_ckpt_path != None:
+            editor.load_ckpt(editor_ckpt_path, True, False)
     if device == 'auto':
         print('Set auto device as `cuda:0`')
         editor.device = 'cuda:0'

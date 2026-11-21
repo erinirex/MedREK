@@ -28,6 +28,8 @@ def train_medrek(model_name:str, data_name, n_epoch, batch_size, train_name, dev
         config_path = "configs/medrek/MEDREK-huatuo.yaml"
     elif 'gpt2' in model_name:
         config_path = "configs/medrek/gpt2-xl.yaml"
+    elif 'llama3' in model_name:
+        config_path = "configs/medrek/llama3-8b-instruct.yaml"
     
     config = MEDREKConfig.from_yaml(config_path)
     medrek = MEDREK(model, tokenizer, config, device, 'models/roberta-base')
@@ -40,7 +42,7 @@ def train_medrek(model_name:str, data_name, n_epoch, batch_size, train_name, dev
         train_name_prefix = None, 
         train_name = train_name, 
         load_ckpt_path = load_ckpt_path, 
-        save_ckpt_per_i = 3000, 
+        save_ckpt_per_i = 5000, 
         log_per_i = 10, 
         random_seed = 1)
 
