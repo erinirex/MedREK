@@ -1,3 +1,3 @@
 ROOT_PATH = ""
-MODEL_PATH = ""
+MODEL_PATH = "models"
 
