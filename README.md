@@ -8,6 +8,7 @@ Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for M
 
 ## 📰 News
 
+* [2026/11/22] 🌍 MedREK also works for **general knowledge editing**! On [CounterFact](#-general-knowledge-editing-on-counterfact), it reaches **~99% locality** on GPT2-XL and Llama3-8B-Instruct, so it is well suited to applications that need precise knowledge preservation.
 * [2025/04/30] 🎉 MedREK has been accepted by **ICML 2026 Main Conference**! 
 * [2025/11/07] 🎉 MedREK has been accepted by ResponsibleFM @ NeurIPS 2025! 
 * [2025/10/16] 🚀 Our paper is available on arXiv! 
@@ -66,6 +67,42 @@ python test_medrek.py -en 'medrek' -mn 'meditron-7b' -et 'batch' -dvc 'cuda:0' \
     -dn 'medcf' -edn 100 \
 ```
 You can check results in `eval_results/medrek`.
+
+
+## 🌍 General Knowledge Editing on CounterFact
+
+MedREK is not limited to the medical domain. It applies directly to **general knowledge editing** in LLMs. We evaluate MedREK on [CounterFact](https://rome.baulab.info/) in the batch-editing setting (100 edits per batch) with GPT2-XL and Llama3-8B-Instruct.
+
+MedREK achieves a **very high locality score (~99%)** on both models, which means unrelated knowledge stays almost entirely unchanged after editing. This shows MedREK's strength in applications that require **precise knowledge preservation**.
+
+| Model | Reliability | Generality | Locality |
+|:--|:--:|:--:|:--:|
+| GPT2-XL | 84.37 | 89.15 | **98.94** |
+| Llama3-8B-Instruct | 81.52 | 95.03 | **99.28** |
+
+To reproduce, first train MedREK on CounterFact:
+```bash
+# GPT2-XL
+python train_medrek.py -mn 'gpt2-xl' -dn 'cf' -tn 'gpt2xl_cf' -bs 8 -epo 120 --device 'cuda:0'
+
+# Llama3-8B-Instruct
+python train_medrek.py -mn 'llama3-8b-instruct' -dn 'cf' -tn 'llama3_cf' -bs 8 -epo 120 --device 'cuda:0' --model_parallel
+```
+Checkpoints will be saved in `train_records/medrek/<model_name>/epoch120_<train_name>/checkpoints/`.
+
+Then evaluate with batch editing (100 edits):
+```bash
+# GPT2-XL
+python test_medrek.py -en 'medrek' -mn 'gpt2-xl' -et 'batch' -dvc 'cuda:0' \
+    -ckpt 'train_records/medrek/gpt2-xl/epoch120_gpt2xl_cf/checkpoints/epoch-92-i-115000-ema_loss-1.0983' \
+    -dn 'cf' -edn 100
+
+# Llama3-8B-Instruct
+python test_medrek.py -en 'medrek' -mn 'llama3-8b-instruct' -et 'batch' -dvc 'cuda:0' \
+    -ckpt 'train_records/medrek/llama3-8b-instruct/epoch120_llama3_cf/checkpoints/epoch-36-i-45000-ema_loss-0.9923' \
+    -dn 'cf' -edn 100
+```
+The results above use the checkpoints at iteration 115000 (GPT2-XL) and 45000 (Llama3-8B-Instruct).
 
 
 ## 🙏 Acknowledgement
