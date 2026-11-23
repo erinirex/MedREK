@@ -109,7 +109,7 @@ MedREK is not limited to the medical domain. It applies directly to **general kn
 
 MedREK achieves a **very high locality score (~99%)** on both models, much higher than leading knowledge editing methods like [AlphaEdit](https://github.com/jianghoucheng/AlphaEdit), which means unrelated knowledge stays almost entirely unchanged after editing. This shows MedREK's strength in applications that require **precise knowledge preservation**.
 
-| Model | Reliability | Generality | Locality |
+| Model | Efficacy | Generality | Locality |
 |:--|:--:|:--:|:--:|
 | GPT2-XL | 84.37 | 89.15 | **98.94** |
 | Llama3-8B-Instruct | 81.52 | 95.03 | **99.28** |
