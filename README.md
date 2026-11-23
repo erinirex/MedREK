@@ -71,8 +71,9 @@ medrek/models/
 ### Prepare data
 
 The training and evaluation data are included in `medrek/data/`, so no download is needed:
-- `data/meta-train/` holds the training sets: `medcf/train_single.json` for MedCF and `cf/counterfact-train.json` for CounterFact.
-- `data/evaluation/` and `data/medversa/` hold the test sets.
+- `data/meta-train/` holds the training sets of MedCF, CounterFact, etc.
+- `data/evaluation/` holds the test sets of MedCF, CounterFact, etc.
+- `data/medversa/` holds the training and test sets of MedVersa.
 
 ## 📊 MedVersa
 
