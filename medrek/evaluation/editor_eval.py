@@ -320,8 +320,8 @@ class EditorEvaluation():
                                 xym_pt['locality'][loc_name]['prompts'], 
                                 xym_pt['locality'][loc_name]['targets'], device)
             
-            with torch.no_grad(): # y: [batch_size, max_prompts&targets_token_n]
-                y = torch.softmax(model(input_ids = x, prompt_ids=[]).logits, 2).argmax(2) 
+            # y: [batch_size, max_prompts&targets_token_n]
+            y = chunked_argmax(model, x, None)
 
             xym['locality'][loc_name] = (x, prt, y, m)
             for r, ps in zip(batched_test_samples['locality'][loc_name],
@@ -496,6 +496,36 @@ def compute_freq(sentence, n=2):
     return nltk.FreqDist(ngrams)
 
 
+# Editing still uses the full batch; only the scoring forwards are split so
+# activations/logits fit in memory. Chunks are sized by logits elements
+# (rows * seq_len * vocab), so large-vocab models (llama3: 128k) get fewer rows.
+EVAL_LOGITS_BUDGET = 2**28   # ~1 GiB of fp32 logits per chunk (hooks copy it ~2x)
+GEN_CHUNK_SIZE = 64
+
+
+def eval_chunk_rows(model, seq_len:int, budget:int = EVAL_LOGITS_BUDGET):
+    vocab = model.config.vocab_size
+    return max(1, budget // (max(1, seq_len) * vocab))
+
+
+def chunked_argmax(model, x:torch.Tensor, prt, chunk_size:int = None, **kwargs):
+    '''Forward `x` in row chunks and return argmax token ids [n, seq].
+    `prt`: per-row prompt ids (sliced with `x`), or None to retrieve from `input_ids`.
+    MedREK retrieval is per-row against the full knowledge base, so chunking
+    does not change results.'''
+    if chunk_size is None:
+        chunk_size = eval_chunk_rows(model, x.shape[1])
+    outs = []
+    with torch.no_grad():
+        for c in range(0, len(x), chunk_size):
+            p = [] if prt is None else prt[c:c + chunk_size]
+            logits = model(input_ids = x[c:c + chunk_size], prompt_ids = p, **kwargs).logits
+            outs.append(logits.argmax(2))
+            del logits
+            torch.cuda.empty_cache()
+    return torch.cat(outs, 0)
+
+
 def test_generation_quality(
     model,
     tok,
@@ -505,28 +535,33 @@ def test_generation_quality(
 ):
 
     n_gen_per_prompt=1
-    # Tokenize batch
-    inp_tok = tok(prefixes, padding=True, return_tensors="pt").to(next(model.parameters()).device)
-    input_ids, attention_mask = inp_tok["input_ids"], inp_tok["attention_mask"]
-
-    # Generate sequences
-    gen_out = model.generate(
-        input_ids=input_ids,
-        attention_mask=attention_mask,
-        max_new_tokens=max_out_len,
-        do_sample=True,
-        num_return_sequences=1,
-        top_k=5
-    )
-
-    batch_size = len(prefixes)
-    gen_out = gen_out.view(batch_size, n_gen_per_prompt, -1)
-
-    # Decode sequences
     gen_texts = []
-    for i in range(batch_size):
-        texts_i = [tok.decode(gen_out[i, j], skip_special_tokens=True) for j in range(n_gen_per_prompt)]
-        gen_texts.append(texts_i)
+    for c in range(0, len(prefixes), GEN_CHUNK_SIZE):
+        chunk = prefixes[c:c + GEN_CHUNK_SIZE]
+        # Tokenize chunk
+        inp_tok = tok(chunk, padding=True, return_tensors="pt").to(next(model.parameters()).device)
+        input_ids, attention_mask = inp_tok["input_ids"], inp_tok["attention_mask"]
+        # `generate` does not pass `prompt_ids`, so MedREK reuses the last
+        # `adopted_prompts`. Run one retrieval pass on this chunk first so the
+        # count matches the chunk and each prefix gets its own retrieved prompt.
+        with torch.no_grad():
+            model(input_ids = input_ids, prompt_ids = [])
+
+        # Generate sequences
+        gen_out = model.generate(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            max_new_tokens=max_out_len,
+            do_sample=True,
+            num_return_sequences=1,
+            top_k=5
+        )
+        gen_out = gen_out.view(len(chunk), n_gen_per_prompt, -1)
+
+        # Decode sequences
+        for i in range(len(chunk)):
+            texts_i = [tok.decode(gen_out[i, j], skip_special_tokens=True) for j in range(n_gen_per_prompt)]
+            gen_texts.append(texts_i)
 
     entropies = []
     for texts_i in gen_texts:
@@ -543,8 +578,8 @@ def test_generation_quality(
 
 def accuracy_and_prediction(model, x:torch.Tensor, prt:torch.Tensor, y:torch.Tensor, m:torch.Tensor, 
                         tokenizer:AutoTokenizer, type: str):
-    with torch.no_grad(): # pre_y: [batch_size, max_prompts&targets_token_n]
-        pre_y = torch.softmax(model(input_ids = x, prompt_ids= prt, type_metrics=type).logits, 2).argmax(2) 
+    # pre_y: [batch_size, max_prompts&targets_token_n]
+    pre_y = chunked_argmax(model, x, prt, type_metrics=type)
     #single gpu
     y= y.to(pre_y.device) 
     acc = ((pre_y == y) * m).sum(1)/m.sum(1) # [batch_size]
