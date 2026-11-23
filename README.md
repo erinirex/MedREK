@@ -8,7 +8,7 @@ Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for M
 
 ## 📰 News
 
-* [2026/11/22] 🌍 MedREK also works for **general knowledge editing**! On [CounterFact](#-general-knowledge-editing-on-counterfact), it reaches **~99% locality** on GPT2-XL and Llama3-8B-Instruct, so it is well suited to applications that need precise knowledge preservation.
+* [2026/11/22] 🌍 MedREK also works for **general knowledge editing**! On CounterFact, it reaches **~99% locality** on GPT2-XL and Llama3-8B-Instruct, so it is well suited to applications that need precise knowledge preservation. 👉 See [General Knowledge Editing on CounterFact](#-general-knowledge-editing-on-counterfact) for the results and how to train/test.
 * [2025/04/30] 🎉 MedREK has been accepted by **ICML 2026 Main Conference**! 
 * [2025/11/07] 🎉 MedREK has been accepted by ResponsibleFM @ NeurIPS 2025! 
 * [2025/10/16] 🚀 Our paper is available on arXiv! 
@@ -73,7 +73,7 @@ You can check results in `eval_results/medrek`.
 
 MedREK is not limited to the medical domain. It applies directly to **general knowledge editing** in LLMs. We evaluate MedREK on [CounterFact](https://rome.baulab.info/) in the batch-editing setting (100 edits per batch) with GPT2-XL and Llama3-8B-Instruct.
 
-MedREK achieves a **very high locality score (~99%)** on both models, which means unrelated knowledge stays almost entirely unchanged after editing. This shows MedREK's strength in applications that require **precise knowledge preservation**.
+MedREK achieves a **very high locality score (~99%)** on both models, much higher than leading knowledge editing methods like [AlphaEdit](https://github.com/jianghoucheng/AlphaEdit), which means unrelated knowledge stays almost entirely unchanged after editing. This shows MedREK's strength in applications that require **precise knowledge preservation**.
 
 | Model | Reliability | Generality | Locality |
 |:--|:--:|:--:|:--:|
