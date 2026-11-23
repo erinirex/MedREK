@@ -22,9 +22,9 @@ Source code for ICML 2026 (main) paper "[**MedREK: Retrieval-Based Editing for M
 
 - We propose **MedREK**, a retrieval-based editing framework that integrates a **shared query-key module** for precise matching with an **attention-based prompt encoder** for informative guidance.
 
-- Experimental results on various medical benchmarks demonstrate that our MedREK achieves superior performance across different core metrics and provides the **first validated solution for batch-editing in medical LLMs**.
+- Experimental results on various medical benchmarks demonstrate that MedREK achieves superior performance across different core metrics and provides the **first validated solution for batch-editing in medical LLMs**.
 
-![duquant](fig/medversa.png)
+![fig](fig/medversa.png)
 
 
 ## 🔧 Setup
@@ -37,9 +37,42 @@ pip install --upgrade medrek
 pip install -r requirements.txt
 ```
 
-First enter the `medrek` directory: `cd medrek`
+First enter the `medrek` directory: `cd medrek`. Run all commands below from this directory.
 
-In `utils/global_attrs.py`, change  `ROOT_PATH` and `MODEL_PATH` to your paths.
+In `utils/global_attrs.py`, change  `ROOT_PATH` and `MODEL_PATH` to your paths. With the default layout, `ROOT_PATH = ""` and `MODEL_PATH = "models"` work as is.
+
+### Prepare models
+
+Before training, download the following models into `medrek/models/`:
+
+1. **RoBERTa-base (required for all runs).** MedREK uses it as the encoder of the query-key module and the prompt encoder. Its path is fixed to `models/roberta-base`:
+   ```bash
+   huggingface-cli download FacebookAI/roberta-base --local-dir models/roberta-base
+   ```
+2. **The LLM to edit.** Its folder name must match the `-mn` argument, because `train_medrek.py` loads the model from `models/<model_name>`:
+   ```bash
+   # Medical editing (MedVersa / MedCF)
+   huggingface-cli download epfl-llm/meditron-7b --local-dir models/meditron-7b
+   # General knowledge editing (CounterFact)
+   huggingface-cli download openai-community/gpt2-xl --local-dir models/gpt2-xl
+   huggingface-cli download meta-llama/Meta-Llama-3-8B-Instruct --local-dir models/llama3-8b-instruct
+   ```
+   Meditron-7B and Llama-3-8B-Instruct are gated on Hugging Face. Accept their licenses on the model pages and run `huggingface-cli login` before downloading.
+
+The resulting layout should look like:
+```
+medrek/models/
+├── roberta-base/
+├── meditron-7b/
+├── gpt2-xl/
+└── llama3-8b-instruct/
+```
+
+### Prepare data
+
+The training and evaluation data are included in `medrek/data/`, so no download is needed:
+- `data/meta-train/` holds the training sets: `medcf/train_single.json` for MedCF and `cf/counterfact-train.json` for CounterFact.
+- `data/evaluation/` and `data/medversa/` hold the test sets.
 
 ## 📊 MedVersa
 
